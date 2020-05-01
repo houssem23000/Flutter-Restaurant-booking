@@ -206,9 +206,8 @@ class AllCategoriesPage extends StatelessWidget {
                                             ))
                                         .toList(),
                                   );
-                                } else {
-                                  return Loader();
                                 }
+                                return Container();
                               },
                             );
                           },
