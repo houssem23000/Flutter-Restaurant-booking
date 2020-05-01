@@ -36,12 +36,14 @@ class RestaurantButtonState extends State<RestaurantButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onPressed,
+      onTap: _isLoading ? null : widget.onPressed,
       child: Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: widget.onPressed == null
+                  ? Colors.black38
+                  : Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(

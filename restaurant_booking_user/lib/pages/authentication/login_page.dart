@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: MediaQuery.of(context).size.height / 7,
               ),
               Image.asset(
-                'assets/logo.jpg',
+                'assets/logo.png',
                 height: 200,
                 width: 200,
               ),
@@ -181,6 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                             ));
                             FirebaseAuth.instance.signOut();
                           }
+                          _buttonKey.currentState.hideLoader();
                         }).whenComplete(() {
                           _buttonKey.currentState.hideLoader();
                         });
@@ -201,6 +202,8 @@ class _LoginPageState extends State<LoginPage> {
                           behavior: SnackBarBehavior.floating,
                           content: Text('Some error occurred!'),
                         ));
+                    }).whenComplete(() {
+                      _buttonKey.currentState.hideLoader();
                     });
                   }
                 },

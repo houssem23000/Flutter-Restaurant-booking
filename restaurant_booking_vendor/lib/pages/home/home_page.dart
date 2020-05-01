@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurantbookingvendor/pages/home/all_category_page.dart';
-import 'package:restaurantbookingvendor/pages/home/all_products_page.dart';
+import 'package:restaurantbookingvendor/pages/home/all_orders_page.dart';
 import 'package:restaurantbookingvendor/pages/profile/profile_page.dart';
 import 'package:restaurantbookingvendor/widgets/backdrop.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
@@ -27,14 +27,14 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   int _currentIndex = 0;
-  final List<Widget> _frontLayers = [AllCategoriesPage(), AllProductsPage()];
+  final List<Widget> _frontLayers = [AllCategoriesPage(), AllOrdersPage()];
 
   @override
   Widget build(BuildContext context) {
     return BackdropScaffold(
       headerHeight: MediaQuery.of(context).size.height / 1.5,
       frontLayerBorderRadius: BorderRadius.circular(20),
-      title: Text(_currentIndex == 0 ? 'Your categories' : 'Your products'),
+      title: Text(_currentIndex == 0 ? 'Your categories' : 'Your orders'),
       actions: [
         Center(
             child: Padding(
@@ -50,7 +50,7 @@ class _HomeBodyState extends State<HomeBody> {
       backLayer: BackdropNavigationBackLayer(
         items: [
           ListTile(title: Text("All categories")),
-          ListTile(title: Text("All products")),
+          ListTile(title: Text("All orders")),
         ],
         onTap: (int position) => {setState(() => _currentIndex = position)},
       ),

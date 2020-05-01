@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: MediaQuery.of(context).size.height / 7,
               ),
               Image.asset(
-                'assets/logo.jpg',
+                'assets/logo.png',
                 height: 200,
                 width: 200,
               ),
