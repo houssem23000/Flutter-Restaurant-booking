@@ -11,6 +11,7 @@ class RestaurantDetailsPage extends StatelessWidget {
   const RestaurantDetailsPage(this.restaurantId);
   @override
   Widget build(BuildContext context) {
+    print(restaurantId);
     return Scaffold(
       body: StreamBuilder<DocumentSnapshot>(
         stream: Firestore.instance
@@ -18,7 +19,7 @@ class RestaurantDetailsPage extends StatelessWidget {
             .document(restaurantId)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasData)
+          if (snapshot.hasData) {
             return SafeArea(
               child: CustomScrollView(
                 slivers: <Widget>[
@@ -31,12 +32,93 @@ class RestaurantDetailsPage extends StatelessWidget {
                         photo: snapshot.data.data['photo'],
                         address: snapshot.data.data['address']),
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate(_buildList()),
-                  )
+                  StreamBuilder<QuerySnapshot>(
+                      stream:
+                          Firestore.instance.collection('category').snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final List<DocumentSnapshot> documents = snapshot
+                              .data.documents
+                              .where((element) =>
+                                  element.data['restaurantId'] == restaurantId)
+                              .toList();
+                          if (documents.isEmpty)
+                            return SliverList(
+                              delegate: SliverChildListDelegate(
+                                  [ErrorText('No products are available.')]),
+                            );
+                          return SliverList(
+                            delegate: SliverChildListDelegate(
+                                documents.map((document) {
+                              return StreamBuilder<QuerySnapshot>(
+                                stream: Firestore.instance
+                                    .collection('menu')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError)
+                                    return ErrorText(
+                                        '${snapshot.error.toString()}');
+                                  if (snapshot.hasData) {
+                                    final List<DocumentSnapshot> menu = snapshot
+                                        .data.documents
+                                        .where((element) =>
+                                            element.data['categoryId'] ==
+                                            document.documentID)
+                                        .toList();
+                                    return ExpansionTile(
+                                      initiallyExpanded: true,
+                                      title: Text(
+                                        document.data['name'],
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      children: menu
+                                          .map((e) => Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        top: BorderSide(
+                                                            color:
+                                                                Colors.grey))),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 8),
+                                                child: ListTile(
+                                                  trailing: Text(
+                                                      '${e.data['price']} ₹'),
+                                                  title:
+                                                      Text('${e.data['name']}'),
+                                                  leading:
+                                                      FadeInImage.assetNetwork(
+                                                          placeholder:
+                                                              'assets/food.jpg',
+                                                          image:
+                                                              e.data['photo']),
+                                                ),
+                                              ))
+                                          .toList(),
+                                    );
+                                  }
+                                  return Container();
+                                },
+                              );
+                            }).toList()),
+                          );
+                        } else {
+                          return SliverList(
+                            delegate: SliverChildListDelegate([Loader()]),
+                          );
+                        }
+                      })
                 ],
               ),
             );
+          }
           return Loader();
         },
       ),

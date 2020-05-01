@@ -181,6 +181,8 @@ class _LoginPageState extends State<LoginPage> {
                             ));
                             FirebaseAuth.instance.signOut();
                           }
+                        }).whenComplete(() {
+                          _buttonKey.currentState.hideLoader();
                         });
                       } else {
                         Scaffold.of(c).showSnackBar(SnackBar(
@@ -199,8 +201,6 @@ class _LoginPageState extends State<LoginPage> {
                           behavior: SnackBarBehavior.floating,
                           content: Text('Some error occurred!'),
                         ));
-                    }).whenComplete(() {
-                      _buttonKey.currentState.hideLoader();
                     });
                   }
                 },

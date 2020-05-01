@@ -43,6 +43,7 @@ class AllRestaurantsPage extends StatelessWidget {
             return ListView.builder(
               itemCount: documents.length,
               itemBuilder: (context, index) => AllRestaurantCard(
+                id: documents[index].documentID,
                 name: documents[index].data['name'],
                 address: documents[index].data['address'],
                 image: documents[index].data['photo'],
