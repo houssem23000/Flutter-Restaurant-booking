@@ -114,12 +114,14 @@ class RestaurantIconButton extends StatelessWidget {
 }
 
 class RestaurantBackButton extends StatelessWidget {
+  final EdgeInsets padding;
+  const RestaurantBackButton({this.padding = const EdgeInsets.all(12)});
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: padding,
         child: RestaurantIconButton(
             icon: Icons.arrow_back,
             onPressed: () => Navigator.maybePop(context)),

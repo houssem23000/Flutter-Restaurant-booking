@@ -29,7 +29,6 @@
 .packages
 .pub-cache/
 .pub/
-/build/
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -42,3 +41,27 @@ app.*.map.json
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+/build/last_build_run.json
+/build/cache.dill
+/build/.last_build_id
+/build/windows/
+/build/app/outputs/apk/profile/output.json
+/build/app/outputs/apk/release/
+/build/app/outputs/flutter-apk/
+/build/app/outputs/logs/
+/build/app/outputs/mapping/
+/build/app/reports/
+/build/app/tmp/
+/build/cloud_firestore/
+/build/firebase_auth/
+/build/firebase_core/
+/build/firebase_storage/
+/build/flutter_assets/
+/build/flutter_plugin_android_lifecycle/
+/build/image_cropper/
+/build/image_picker/
+/build/kotlin/
+/build/app/outputs/apk/debug/
+/build/app/kotlin/
+/build/app/intermediates/
+/build/app/generated/

@@ -218,6 +218,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       final String pass = _passwordController.text.trim();
                       final String confirmPass = _confirmPassword.text.trim();
                       final String phone = _phoneController.text.trim();
+                      final String address = _addressController.text.trim();
                       if (name.isEmpty) {
                         Scaffold.of(c).showSnackBar(SnackBar(
                           behavior: SnackBarBehavior.floating,
@@ -259,6 +260,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               'createdAt': DateTime.now(),
                               'email': email,
                               'name': name,
+                              'address': address,
                               'phone': phone,
                               'type': UserType.vendor.string
                             }).then((value) {

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurantbookinguser/config/enums.dart';
 import 'package:restaurantbookinguser/pages/bookings/upcoming_bookings_page.dart';
 import 'package:restaurantbookinguser/pages/profile/profile_page.dart';
 import 'package:restaurantbookinguser/pages/restaurants/all_restaurants_page.dart';
 import 'package:restaurantbookinguser/widgets/bookings_card.dart';
+import 'package:restaurantbookinguser/widgets/loader_error.dart';
 import 'package:restaurantbookinguser/widgets/restaurant_button.dart';
 import 'package:restaurantbookinguser/widgets/restaurant_card.dart';
 
@@ -10,7 +13,6 @@ import 'package:restaurantbookinguser/widgets/restaurant_card.dart';
 /// Created by Sunil Kumar on 29-04-2020 10:21 AM.
 ///
 class HomePage extends StatefulWidget {
-  static const routeName = '/';
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -32,7 +34,8 @@ class _HomePageState extends State<HomePage> {
                   child: RestaurantIconButton(
                     icon: Icons.person,
                     onPressed: () {
-                      Navigator.pushNamed(context, ProfilePage.routeName);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => ProfilePage()));
                     },
                   ),
                 ),
@@ -70,9 +73,31 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 height: 250,
-                child: ListView.builder(
-                  itemBuilder: (context, index) => RestaurantCard(),
-                  scrollDirection: Axis.horizontal,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance.collection('users').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError)
+                      return ErrorText('${snapshot.error.toString()}');
+                    if (snapshot.hasData) {
+                      final List<DocumentSnapshot> documents = snapshot
+                          .data.documents
+                          .where((element) =>
+                              element.data['type'] == UserType.vendor.string)
+                          .toList();
+                      return ListView.builder(
+                        itemCount: documents.length,
+                        itemBuilder: (context, index) => RestaurantCard(
+                          documents[index].documentID,
+                          name: documents[index].data['name'],
+                          address: documents[index].data['address'],
+                          image: documents[index].data['photo'],
+                        ),
+                        scrollDirection: Axis.horizontal,
+                      );
+                    } else {
+                      return Loader();
+                    }
+                  },
                 ),
               ),
               Align(
@@ -82,8 +107,10 @@ class _HomePageState extends State<HomePage> {
                   child: FlatButton(
                     child: Text('View all'),
                     onPressed: () {
-                      Navigator.pushNamed(
-                          context, AllRestaurantsPage.routeName);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => AllRestaurantsPage()));
                     },
                     highlightColor: Colors.transparent,
                     textColor: Theme.of(context).primaryColor,

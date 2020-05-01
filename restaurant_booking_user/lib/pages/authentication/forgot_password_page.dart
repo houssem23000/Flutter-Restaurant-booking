@@ -10,7 +10,6 @@ import 'package:restaurantbookinguser/widgets/restaurant_container.dart';
 class ForgotPasswordPage extends StatefulWidget {
   final String email;
   const ForgotPasswordPage({this.email = ''});
-  static const String routeName = 'forgot-passowrd';
 
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();

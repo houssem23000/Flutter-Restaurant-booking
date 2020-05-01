@@ -16,8 +16,6 @@ import 'package:restaurantbookinguser/widgets/restaurant_button.dart';
 ///
 
 class ProfilePage extends StatefulWidget {
-  static const String routeName = 'profile';
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -110,10 +108,36 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                     child: RestaurantIconButton(
                       icon: Icons.power_settings_new,
                       onPressed: () {
-                        FirebaseAuth.instance.signOut().then((value) {
-                          Navigator.pushReplacementNamed(
-                              context, LoginPage.routeName);
-                        });
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                title: Text('Are you sure to logout?'),
+                                actions: [
+                                  FlatButton(
+                                      child: Text('No'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      }),
+                                  FlatButton(
+                                    child: Text('Yes'),
+                                    onPressed: () {
+                                      FirebaseAuth.instance
+                                          .signOut()
+                                          .then((value) {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (c) => LoginPage()),
+                                            (route) => false);
+                                      });
+                                    },
+                                  )
+                                ],
+                              );
+                            });
                       },
                     ),
                   ),
@@ -303,12 +327,20 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
             .then((File value) {
           if (value != null && value.path != null && value.path.isNotEmpty) {
             _uploadFile(value);
+          } else {
+            setState(() {
+              isLoading = false;
+            });
           }
         }).catchError((error) {
           print(error.toString());
           setState(() {
             isLoading = false;
           });
+        });
+      } else {
+        setState(() {
+          isLoading = false;
         });
       }
     }).catchError((error) {
@@ -349,173 +381,3 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
     }
   }
 }
-/*
- ListView(
-        children: [
-          SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                RestaurantBackButton(),
-                Spacer(),
-                RestaurantIconButton(
-                  icon: Icons.power_settings_new,
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.pushReplacementNamed(
-                          context, LoginPage.routeName);
-                    });
-                  },
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-//                RestaurantIconButton(icon: Icons.edit, onPressed: () {}),
-              ],
-            ),
-          ),
-          SizedBox(height: 12),
-          Center(
-            child: SizedBox(
-              height: 200,
-              width: 200,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          gradient: LinearGradient(
-                              colors: [
-                                Color(0xffF1F3F7),
-                                Color(0xffD2D8E4),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Color(0xffF1F3F7),
-                                offset: Offset(-5, -5),
-                                blurRadius: 5),
-                            BoxShadow(
-                                color: Color(0xffD2D8E4),
-                                offset: Offset(5, 5),
-                                blurRadius: 5),
-                          ]),
-                      padding: const EdgeInsets.all(12),
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAlias,
-                            child: widget.document['photo'] == null ||
-                                    widget.document['photo'].isEmpty
-                                ? Image.asset(
-                                    'assets/dp_placeholder.jpg',
-                                    fit: BoxFit.cover,
-                                  )
-                                : FadeInImage.assetNetwork(
-                                    placeholder: 'assets/dp_placeholder.jpg',
-                                    image: widget.document['photo'],
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                          if (isLoading)
-                            Positioned.fill(
-                                child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                            )),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: GestureDetector(
-                      onTap: _chooseImage,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xfff5f6f9),
-                                    Color(0xffD2D8E4)
-                                  ],
-                                  stops: [
-                                    0.1,
-                                    1
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Color(0xffE6E9F0),
-                                    offset: Offset(-1, -1),
-                                    blurRadius: 2),
-                                BoxShadow(
-                                    color: Color(0xffD2D8E4),
-                                    offset: Offset(5, 5),
-                                    blurRadius: 5),
-                              ]),
-                          padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
-                          child: Icon(
-                            Icons.add_photo_alternate,
-                            color: Theme.of(context).primaryColor,
-                          )),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Center(
-            child: Text(
-              '${widget.document['name']}',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
-            ),
-          ),
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${widget.document['phone']} . ',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  '${widget.document['email']}',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 12),
-          StickyHeader(
-            header: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 0,
-              title: Text(
-                'Your Orders',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorDark,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            content: Column(
-              children: List<int>.generate(20, (index) => index)
-                  .map((item) => Container(
-                        height: 50,
-                        color: Colors.grey[(item + 1) * 100],
-                      ))
-                  .toList(),
-            ),
-          )
-        ],
-      )
-* */

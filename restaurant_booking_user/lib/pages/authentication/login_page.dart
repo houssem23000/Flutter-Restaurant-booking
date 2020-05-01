@@ -13,8 +13,6 @@ import 'package:restaurantbookinguser/widgets/restaurant_container.dart';
 /// Created by Sunil Kumar on 28-04-2020 08:48 AM.
 ///
 class LoginPage extends StatefulWidget {
-  static const String routeName = 'login';
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -124,9 +122,11 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.only(right: 20),
                   child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
-                            context, ForgotPasswordPage.routeName,
-                            arguments: _emailController.text);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => ForgotPasswordPage(
+                                    email: _emailController.text)));
                       },
                       child: Text(
                         'Forgot password?',
@@ -169,8 +169,10 @@ class _LoginPageState extends State<LoginPage> {
                             .get()
                             .then((value) {
                           if (value.data['type'] == UserType.user.string) {
-                            Navigator.pushReplacementNamed(
-                                context, HomePage.routeName);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (_) => HomePage()),
+                                (_) => false);
                           } else {
                             Scaffold.of(c).showSnackBar(SnackBar(
                               behavior: SnackBarBehavior.floating,
@@ -205,7 +207,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
               GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, SignUpPage.routeName);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => SignUpPage()));
                   },
                   child: Text(
                     'New user? Sign up here.',

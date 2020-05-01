@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:restaurantbookinguser/config/theme_config.dart';
 import 'package:restaurantbookinguser/pages/authentication/login_page.dart';
 import 'package:restaurantbookinguser/pages/home/home_page.dart';
-import 'package:restaurantbookinguser/widgets/loader_error.dart';
-
-import 'config/page_router.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,9 +19,7 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<FirebaseUser>(
         future: FirebaseAuth.instance.currentUser(),
         builder: (c, s) {
-          if (s.hasError) {
-            return LoginPage();
-          }
+          if (s.hasError) print('ERROR ${s.error.toString()}');
           if (s.hasData) {
             if (s.data.uid != null && s.data.uid.isNotEmpty) {
               return HomePage();
@@ -36,7 +31,6 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
-      onGenerateRoute: Router.generateRoute,
     );
   }
 }

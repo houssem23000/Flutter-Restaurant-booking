@@ -11,8 +11,6 @@ import 'package:restaurantbookinguser/widgets/restaurant_container.dart';
 /// Created by Sunil Kumar on 28-04-2020 10:09 AM.
 ///
 class SignUpPage extends StatefulWidget {
-  static const String routeName = 'signup';
-
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -246,8 +244,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               'phone': phone,
                               'type': UserType.user.string
                             }).then((value) {
-                              Navigator.pushReplacementNamed(
-                                  context, HomePage.routeName);
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => HomePage()),
+                                  (_) => false);
                             }).catchError((e) {
                               if (e is PlatformException)
                                 Scaffold.of(c).showSnackBar(SnackBar(
