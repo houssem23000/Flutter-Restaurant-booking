@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurantbookingvendor/config/enums.dart';
+import 'package:restaurantbookingvendor/widgets/bookings_card.dart';
 import 'package:restaurantbookingvendor/widgets/loader_error.dart';
 
 ///
@@ -15,7 +17,10 @@ class AllOrdersPage extends StatelessWidget {
         builder: (c, userSnap) {
           if (userSnap.hasData && userSnap.data.uid != null)
             return StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('order').snapshots(),
+              stream: Firestore.instance
+                  .collection('order')
+                  .orderBy('date')
+                  .snapshots(),
               builder: (c, snapshot) {
                 if (snapshot.hasError)
                   return ErrorText('${snapshot.error.toString()}');
@@ -24,13 +29,38 @@ class AllOrdersPage extends StatelessWidget {
                       .where((element) =>
                           element.data['restaurantId'] == userSnap.data.uid)
                       .toList();
-                      if(orders.isEmpty){
-                        return ErrorText('You have no orders yet.');
-                      }
+                  if (orders.isEmpty) {
+                    return ErrorText('You have no orders yet.');
+                  }
+                  orders.sort(
+                      (a, b) => a.data['status'] > b.data['status'] ? 1 : 0);
+
                   return ListView.builder(
                       itemCount: orders.length,
                       itemBuilder: (c, i) {
-                        return OrderCard();
+                        if (orders[i].data['status'] ==
+                            OrderStatus.onGoing.toInt)
+                          return BookingCard.onGoing(
+                              tableId: orders[i].data['tableId'],
+                              createdBy: orders[i].data['createdBy'],
+                              orderId: orders[i].documentID);
+                        else if (orders[i].data['status'] ==
+                            OrderStatus.cancelled.toInt)
+                          return BookingCard.cancelled(
+                              tableId: orders[i].data['tableId'],
+                              createdBy: orders[i].data['createdBy'],
+                              orderId: orders[i].documentID);
+                        else if (orders[i].data['status'] ==
+                            OrderStatus.completed.toInt)
+                          return BookingCard.completed(
+                              tableId: orders[i].data['tableId'],
+                              createdBy: orders[i].data['createdBy'],
+                              orderId: orders[i].documentID);
+                        else
+                          return BookingCard(
+                              tableId: orders[i].data['tableId'],
+                              createdBy: orders[i].data['createdBy'],
+                              orderId: orders[i].documentID);
                       });
                 } else {
                   return Loader();
@@ -42,12 +72,5 @@ class AllOrdersPage extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class OrderCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row();
   }
 }

@@ -26,7 +26,6 @@ class CartModel extends ChangeNotifier {
   }
 
   void add(OrderItem item) {
-    print(item.name);
     if (_items.contains(item)) {
       _items[_items.indexOf(item)].quantity++;
     } else {

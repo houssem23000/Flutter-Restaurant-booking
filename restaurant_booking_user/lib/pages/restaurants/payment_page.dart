@@ -78,7 +78,7 @@ class _PaymentPageState extends State<PaymentPage> {
   void _handlePaymentError(PaymentFailureResponse response) {
     setState(() {
       isLoading = false;
-      loadingText = 'Payment error.${response.message}';
+      loadingText = '${response.message}';
     });
   }
 
@@ -101,6 +101,7 @@ class _PaymentPageState extends State<PaymentPage> {
             'restaurantId': widget.restaurant,
             "slotNo": widget.timeSlot,
             'tableId': widget.tableId,
+            'status': -1
           }).then((DocumentReference doc) {
             widget.items.forEach((element) async {
               await doc.collection('orderItems').add(element.toJson());

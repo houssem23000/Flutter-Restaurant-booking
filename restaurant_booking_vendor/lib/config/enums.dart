@@ -127,3 +127,18 @@ extension PaymentStatusToString on PaymentStatus {
     }
   }
 }
+
+String paymentFromIntToString(int i) {
+  if (i == PaymentStatus.success.toInt) return PaymentStatus.success.string;
+  if (i == PaymentStatus.initiated.toInt) return PaymentStatus.initiated.string;
+  if (i == PaymentStatus.refunded.toInt) return PaymentStatus.refunded.string;
+  return 'Unknown';
+}
+
+String orderFromIntToString(int i) {
+  if (i == OrderStatus.created.toInt) return OrderStatus.created.string;
+  if (i == OrderStatus.completed.toInt) return OrderStatus.completed.string;
+  if (i == OrderStatus.cancelled.toInt) return OrderStatus.cancelled.string;
+  if (i == OrderStatus.onGoing.toInt) return OrderStatus.onGoing.string;
+  return 'Unknown';
+}

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restaurantbookingvendor/config/enums.dart';
@@ -9,16 +10,16 @@ import 'package:restaurantbookingvendor/pages/home/order_details_page.dart';
 ///
 class BookingCard extends StatelessWidget {
   final OrderStatus status;
-  final String orderId, restaurantId;
+  final String orderId, createdBy;
   final String tableId;
 
-  const BookingCard({this.restaurantId, this.orderId, this.tableId})
+  const BookingCard({this.createdBy, this.orderId, this.tableId})
       : status = OrderStatus.created;
-  const BookingCard.cancelled({this.restaurantId, this.orderId, this.tableId})
+  const BookingCard.cancelled({this.createdBy, this.orderId, this.tableId})
       : status = OrderStatus.cancelled;
-  const BookingCard.onGoing({this.restaurantId, this.orderId, this.tableId})
+  const BookingCard.onGoing({this.createdBy, this.orderId, this.tableId})
       : status = OrderStatus.onGoing;
-  const BookingCard.completed({this.restaurantId, this.orderId, this.tableId})
+  const BookingCard.completed({this.createdBy, this.orderId, this.tableId})
       : status = OrderStatus.completed;
 
   @override
@@ -55,17 +56,23 @@ class BookingCard extends StatelessWidget {
         builder: (c, snapshot) => StreamBuilder<DocumentSnapshot>(
           stream: Firestore.instance
               .collection('users')
-              .document(restaurantId)
+              .document(createdBy)
               .snapshots(),
-          builder: (c, restaurantSnapshot) => StreamBuilder<DocumentSnapshot>(
+          builder: (c, userSnapshot) => StreamBuilder<DocumentSnapshot>(
             stream: Firestore.instance
                 .collection('table')
                 .document(tableId)
                 .snapshots(),
             builder: (c, tableSnapshot) => GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (c) => OrderDetailsPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (c) => OrderDetailsPage(
+                              createdBy: createdBy,
+                              tableId: tableId,
+                              orderId: orderId,
+                            )));
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -89,30 +96,64 @@ class BookingCard extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Text(
-                        restaurantSnapshot.hasData
-                            ? '${restaurantSnapshot.data['name']}'
-                            : '',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).primaryColorDark),
+                      child: Row(
+                        children: [
+                          Hero(
+                            tag: orderId,
+                            child: Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAlias,
+                              child: userSnapshot.hasData &&
+                                      userSnapshot.data['photo'] != null
+                                  ? FadeInImage.assetNetwork(
+                                      placeholder: 'assets/dp_placeholder.jpg',
+                                      image: userSnapshot.data['photo'],
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder: (c, url, s) =>
+                                          Image.asset(
+                                        'assets/dp_placeholder.jpg',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : Image.asset(
+                                      'assets/dp_placeholder.jpg',
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userSnapshot.hasData
+                                    ? '${userSnapshot.data['name']}'
+                                    : '',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).primaryColorDark),
+                              ),
+                              Text(
+                                  userSnapshot.hasData
+                                      ? '${userSnapshot.data['email']} . ${userSnapshot.data['phone']}'
+                                      : '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      height: 1.1,
+                                      fontWeight: FontWeight.w600,
+                                      color: Theme.of(context)
+                                          .primaryColorDark
+                                          .withOpacity(0.7))),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Text(
-                          restaurantSnapshot.hasData
-                              ? '${restaurantSnapshot.data['address']}'
-                              : '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              height: 1.1,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context)
-                                  .primaryColorDark
-                                  .withOpacity(0.7))),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
@@ -173,7 +214,7 @@ class BookingCard extends StatelessWidget {
                         Spacer(),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8, 4, 4, 0),
-                          child: Text('View booking >',
+                          child: Text('View order >',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(

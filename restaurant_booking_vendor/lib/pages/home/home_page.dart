@@ -28,7 +28,7 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   final List<Widget> _frontLayers = [
     AllCategoriesPage(),
     AllOrdersPage(),
