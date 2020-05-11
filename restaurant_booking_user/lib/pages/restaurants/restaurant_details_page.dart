@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurantbookinguser/pages/restaurants/booking_page.dart';
 import 'package:restaurantbookinguser/widgets/loader_error.dart';
 import 'package:restaurantbookinguser/widgets/restaurant_button.dart';
 
@@ -11,16 +12,41 @@ class RestaurantDetailsPage extends StatelessWidget {
   const RestaurantDetailsPage(this.restaurantId);
   @override
   Widget build(BuildContext context) {
-    print(restaurantId);
-    return Scaffold(
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: Firestore.instance
-            .collection('users')
-            .document(restaurantId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return SafeArea(
+    return StreamBuilder<DocumentSnapshot>(
+      stream: Firestore.instance
+          .collection('users')
+          .document(restaurantId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError)
+          return Material(
+            child: ErrorText(snapshot.error.toString()),
+          );
+        if (snapshot.hasData) {
+          return Scaffold(
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (c) => BookingPage(
+                            snapshot.data.data['name'], restaurantId)));
+              },
+              elevation: 4,
+              highlightElevation: 0,
+              label: Text(
+                'Book table',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+              icon: Icon(
+                Icons.fastfood,
+                color: Colors.white,
+              ),
+            ),
+            body: SafeArea(
               child: CustomScrollView(
                 slivers: <Widget>[
                   SliverPersistentHeader(
@@ -117,30 +143,12 @@ class RestaurantDetailsPage extends StatelessWidget {
                       })
                 ],
               ),
-            );
-          }
-          return Loader();
-        },
-      ),
+            ),
+          );
+        }
+        return Material(child: Loader());
+      },
     );
-  }
-
-  List _buildList() {
-    List<Widget> listItems = List();
-    listItems.add(Container(
-      color: Colors.grey,
-      height: 60,
-      alignment: Alignment.centerLeft,
-      padding: EdgeInsets.all(16),
-      child: Text(
-        'Products',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-    ));
-    for (int i = 0; i < 20; i++) {
-      listItems.add(ListTile(title: Text('Item $i')));
-    }
-    return listItems;
   }
 }
 

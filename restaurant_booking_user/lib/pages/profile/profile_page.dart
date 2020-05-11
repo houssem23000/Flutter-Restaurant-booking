@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:restaurantbookinguser/config/enums.dart';
 import 'package:restaurantbookinguser/pages/authentication/login_page.dart';
+import 'package:restaurantbookinguser/widgets/booking_details_card.dart';
 import 'package:restaurantbookinguser/widgets/loader_error.dart';
 import 'package:restaurantbookinguser/widgets/restaurant_button.dart';
 
@@ -291,13 +293,53 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                   )))
         ];
       },
-      body: ListView(
-          padding: const EdgeInsets.all(0),
-          children: List.generate(
-              20,
-              (index) => ListTile(
-                    title: Text('Item $index'),
-                  ))),
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            Firestore.instance.collection('order').orderBy('date').snapshots(),
+        builder: (c, snapshot) {
+          if (snapshot.hasError) return ErrorText('${snapshot.error}');
+          if (snapshot.hasData) {
+            final List<DocumentSnapshot> myOrders = snapshot.data.documents
+                .where((element) =>
+                    element.data['createdBy'] == widget.document.documentID)
+                .toList();
+            myOrders
+                .sort((a, b) => a.data['status'] > b.data['status'] ? 1 : 0);
+            if (myOrders.isEmpty) {
+              return ErrorText('You have no orders.');
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: myOrders.length,
+              itemBuilder: (c, i) {
+                if (myOrders[i].data['status'] == OrderStatus.onGoing.toInt)
+                  return BookingDetailsCard.onGoing(
+                      tableId: myOrders[i].data['tableId'],
+                      restaurantId: myOrders[i].data['restaurantId'],
+                      orderId: myOrders[i].documentID);
+                else if (myOrders[i].data['status'] ==
+                    OrderStatus.cancelled.toInt)
+                  return BookingDetailsCard.cancelled(
+                      tableId: myOrders[i].data['tableId'],
+                      restaurantId: myOrders[i].data['restaurantId'],
+                      orderId: myOrders[i].documentID);
+                else if (myOrders[i].data['status'] ==
+                    OrderStatus.completed.toInt)
+                  return BookingDetailsCard.completed(
+                      tableId: myOrders[i].data['tableId'],
+                      restaurantId: myOrders[i].data['restaurantId'],
+                      orderId: myOrders[i].documentID);
+                else
+                  return BookingDetailsCard(
+                      tableId: myOrders[i].data['tableId'],
+                      restaurantId: myOrders[i].data['restaurantId'],
+                      orderId: myOrders[i].documentID);
+              },
+            );
+          } else
+            return Loader();
+        },
+      ),
     );
   }
 

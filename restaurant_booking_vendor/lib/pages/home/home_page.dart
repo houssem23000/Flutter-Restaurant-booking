@@ -5,6 +5,8 @@ import 'package:restaurantbookingvendor/pages/profile/profile_page.dart';
 import 'package:restaurantbookingvendor/widgets/backdrop.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
 
+import 'all_tables_page.dart';
+
 ///
 /// Created by Sunil Kumar on 29-04-2020 10:21 AM.
 ///
@@ -27,14 +29,32 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   int _currentIndex = 0;
-  final List<Widget> _frontLayers = [AllCategoriesPage(), AllOrdersPage()];
+  final List<Widget> _frontLayers = [
+    AllCategoriesPage(),
+    AllOrdersPage(),
+    ManageTablesPage(),
+  ];
+
+  String getTitle() {
+    switch (_currentIndex) {
+      case 0:
+        return 'Your categories';
+      case 1:
+        return 'Your orders';
+      case 2:
+        return 'Manage tables';
+      case 3:
+      default:
+        return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BackdropScaffold(
-      headerHeight: MediaQuery.of(context).size.height / 1.5,
+      headerHeight: MediaQuery.of(context).size.height / 2,
       frontLayerBorderRadius: BorderRadius.circular(20),
-      title: Text(_currentIndex == 0 ? 'Your categories' : 'Your orders'),
+      title: Text(getTitle()),
       actions: [
         Center(
             child: Padding(
@@ -50,7 +70,8 @@ class _HomeBodyState extends State<HomeBody> {
       backLayer: BackdropNavigationBackLayer(
         items: [
           ListTile(title: Text("All categories")),
-          ListTile(title: Text("All orders")),
+          ListTile(title: Text("View orders")),
+          ListTile(title: Text("Manage tables")),
         ],
         onTap: (int position) => {setState(() => _currentIndex = position)},
       ),

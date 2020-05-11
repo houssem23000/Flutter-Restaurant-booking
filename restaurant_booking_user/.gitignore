@@ -65,3 +65,5 @@ app.*.map.json
 /build/app/kotlin/
 /build/app/intermediates/
 /build/app/generated/
+/build/f9bc35d9fe412db91556ed29f295b74d/
+/build/razorpay_flutter/

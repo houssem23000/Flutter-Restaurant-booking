@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:restaurantbookingvendor/pages/authentication/login_page.dart';
+import 'package:restaurantbookingvendor/widgets/edit_profile_sheet.dart';
 import 'package:restaurantbookingvendor/widgets/loader_error.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
 
@@ -105,6 +106,20 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
               actions: [
                 Center(
                   child: Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: RestaurantIconButton(
+                      icon: Icons.edit,
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => EditProfileSheet());
+                      },
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: RestaurantIconButton(
                       icon: Icons.power_settings_new,
@@ -144,14 +159,14 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                   ),
                 )
               ],
-              expandedHeight: 420.0,
+              expandedHeight: 430.0,
               floating: true,
               pinned: true,
               snap: true,
               elevation: 8,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               flexibleSpace: FlexibleSpaceBar(
-                  title: Text('Your orders',
+                  title: Text('Past orders',
                       style: TextStyle(
                         fontSize: 16.0,
                       )),
@@ -270,6 +285,16 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                           style: TextStyle(
                               fontSize: 26, fontWeight: FontWeight.w700),
                         ),
+                      ),
+                      Center(
+                        child: Text(
+                          '${widget.document['address']}',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 12,
                       ),
                       Center(
                         child: Row(

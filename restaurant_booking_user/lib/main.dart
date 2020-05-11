@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurantbookinguser/config/theme_config.dart';
+import 'package:restaurantbookinguser/model/cart_model.dart';
 import 'package:restaurantbookinguser/pages/authentication/login_page.dart';
 import 'package:restaurantbookinguser/pages/home/home_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(create: (c) => CartModel(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

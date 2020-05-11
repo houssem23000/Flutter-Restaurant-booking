@@ -85,6 +85,32 @@ class AllCategoriesPage extends StatelessWidget {
                                       children: [
                                         IconButton(
                                           onPressed: () {
+                                            showModalBottomSheet(
+                                                context: context,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.vertical(
+                                                            top:
+                                                                Radius.circular(
+                                                                    16))),
+                                                isScrollControlled: true,
+                                                barrierColor: Colors.black26,
+                                                clipBehavior: Clip.antiAlias,
+                                                backgroundColor: Theme.of(
+                                                        context)
+                                                    .scaffoldBackgroundColor,
+                                                builder: (c) {
+                                                  return AddCategorySheet(
+                                                    id: documents[i].documentID,
+                                                    name: documents[i]
+                                                        .data['name'],
+                                                  );
+                                                });
+                                          },
+                                          icon: Icon(Icons.edit),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
                                             showDialog(
                                                 context: context,
                                                 barrierDismissible: false,

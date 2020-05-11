@@ -7,6 +7,8 @@ import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
 /// Created by Sunil Kumar on 01-05-2020 08:46 AM.
 ///
 class AddCategorySheet extends StatefulWidget {
+  final String id, name;
+  const AddCategorySheet({this.id = '', this.name = ''});
   @override
   _AddCategorySheetState createState() => _AddCategorySheetState();
 }
@@ -17,7 +19,7 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
   @override
   void initState() {
     super.initState();
-    _name = TextEditingController()
+    _name = TextEditingController(text: widget.name)
       ..addListener(() {
         setState(() {});
       });
@@ -25,8 +27,8 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
 
   @override
   void dispose() {
-    super.dispose();
     _name.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,7 +40,7 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 16),
-          Text('Add category'),
+          Text('${widget.id.isNotEmpty ? 'Edit' : 'Add'} category'),
           SizedBox(height: 16),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 22, vertical: 8),
@@ -67,20 +69,37 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
                     onPressed: _name.text.trim().isNotEmpty
                         ? () {
                             buttonKey.currentState.showLoader();
-                            FirebaseAuth.instance.currentUser().then((value) {
-                              Firestore.instance.collection('category').add({
-                                'name': _name.text.trim(),
-                                'restaurantId': value.uid
-                              }).whenComplete(() {
-                                Navigator.pop(context);
+                            if (widget.id.isEmpty) {
+                              FirebaseAuth.instance.currentUser().then((value) {
+                                Firestore.instance.collection('category').add({
+                                  'name': _name.text.trim(),
+                                  'restaurantId': value.uid
+                                }).whenComplete(() {
+                                  Navigator.pop(context);
+                                  buttonKey.currentState.hideLoader();
+                                });
+                              }).catchError((e) {
                                 buttonKey.currentState.hideLoader();
                               });
-                            }).catchError((e) {
-                              buttonKey.currentState.hideLoader();
-                            });
+                            } else {
+                              FirebaseAuth.instance.currentUser().then((value) {
+                                Firestore.instance
+                                    .collection('category')
+                                    .document(widget.id)
+                                    .updateData({
+                                  'name': _name.text.trim(),
+                                  'restaurantId': value.uid
+                                }).whenComplete(() {
+                                  Navigator.pop(context);
+                                  buttonKey.currentState.hideLoader();
+                                });
+                              }).catchError((e) {
+                                buttonKey.currentState.hideLoader();
+                              });
+                            }
                           }
                         : null,
-                    text: 'Add',
+                    text: widget.id.isEmpty ? 'Add' : 'Edit',
                     key: buttonKey,
                   ),
                 )
