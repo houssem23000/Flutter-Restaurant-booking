@@ -86,7 +86,8 @@ class RestaurantButtonState extends State<RestaurantButton> {
 class RestaurantIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
-  const RestaurantIconButton({this.icon, this.onPressed});
+  final Color color;
+  const RestaurantIconButton({this.icon, this.color, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +110,7 @@ class RestaurantIconButton extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
           child: Icon(
             icon,
-            color: Theme.of(context).primaryColor,
+            color: color ?? Theme.of(context).primaryColor,
           )),
     );
   }

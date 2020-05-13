@@ -190,43 +190,91 @@ class AllCategoriesPage extends StatelessWidget {
                                               child: ListTile(
                                                 title:
                                                     Text('${e.data['name']}'),
+                                                subtitle: Text(
+                                                    '${e.data['price']} ₹'),
                                                 leading:
                                                     FadeInImage.assetNetwork(
                                                         placeholder:
                                                             'assets/food.jpg',
                                                         image: e.data['photo']),
-                                                trailing: IconButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        barrierDismissible:
-                                                            false,
-                                                        builder: (c) =>
-                                                            RestaurantDialog(
-                                                              positiveAction:
-                                                                  () {
-                                                                return Firestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'menu')
-                                                                    .document(e
-                                                                        .documentID)
-                                                                    .delete();
-                                                              },
-                                                              positiveText:
-                                                                  'Delete',
-                                                              alertTitle:
-                                                                  'Are you sure to delete this menu?',
-                                                              completedTitle:
-                                                                  'This menu has been deleted',
-                                                              loadingTitle:
-                                                                  'Plase wait while deleting',
-                                                              negativeText:
-                                                                  'Cancel',
-                                                            ));
-                                                  },
-                                                  color: Colors.red,
-                                                  icon: Icon(Icons.delete),
+                                                trailing: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      color: Theme.of(context)
+                                                          .primaryColor,
+                                                      onPressed: () {
+                                                        showModalBottomSheet(
+                                                            context: context,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.vertical(
+                                                                    top: Radius
+                                                                        .circular(
+                                                                            16))),
+                                                            isScrollControlled:
+                                                                true,
+                                                            barrierColor:
+                                                                Colors.black26,
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            backgroundColor: Theme
+                                                                    .of(context)
+                                                                .scaffoldBackgroundColor,
+                                                            builder: (c) {
+                                                              return AddMenuSheet(
+                                                                e.documentID,
+                                                                menuId: e
+                                                                    .documentID,
+                                                                name: e.data[
+                                                                    'name'],
+                                                                photo: e.data[
+                                                                    'photo'],
+                                                                price: e.data[
+                                                                    'price'],
+                                                                category:
+                                                                    documents[i]
+                                                                            .data[
+                                                                        'name'],
+                                                              );
+                                                            });
+                                                      },
+                                                      icon: Icon(Icons.edit),
+                                                    ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder: (c) =>
+                                                                RestaurantDialog(
+                                                                  positiveAction:
+                                                                      () {
+                                                                    return Firestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'menu')
+                                                                        .document(
+                                                                            e.documentID)
+                                                                        .delete();
+                                                                  },
+                                                                  positiveText:
+                                                                      'Delete',
+                                                                  alertTitle:
+                                                                      'Are you sure to delete this menu?',
+                                                                  completedTitle:
+                                                                      'This menu has been deleted',
+                                                                  loadingTitle:
+                                                                      'Plase wait while deleting',
+                                                                  negativeText:
+                                                                      'Cancel',
+                                                                ));
+                                                      },
+                                                      color: Colors.red,
+                                                      icon: Icon(Icons.delete),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ))

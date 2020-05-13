@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,10 @@ import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
 ///
 class AddMenuSheet extends StatefulWidget {
   final String categoryId, category;
-  AddMenuSheet(this.categoryId, {this.category});
+  final String name, photo, menuId;
+  final double price;
+  AddMenuSheet(this.categoryId,
+      {this.category, this.price, this.name, this.photo, this.menuId});
 
   @override
   _AddMenuSheetState createState() => _AddMenuSheetState();
@@ -28,11 +30,11 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
   @override
   void initState() {
     super.initState();
-    _name = TextEditingController()
+    _name = TextEditingController(text: widget.name ?? '')
       ..addListener(() {
         setState(() {});
       });
-    _price = TextEditingController()
+    _price = TextEditingController(text: '${widget.price ?? ''}')
       ..addListener(() {
         setState(() {});
       });
@@ -56,7 +58,7 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
           children: [
             SizedBox(height: 16),
             Text(
-              'Add ${widget.category} menu',
+              '${widget.menuId == null ? 'Add' : 'Edit'} ${widget.category} menu',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -94,13 +96,19 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
                           decoration: BoxDecoration(shape: BoxShape.circle),
                           clipBehavior: Clip.antiAlias,
                           alignment: Alignment.center,
-                          child: this._photo == null
+                          child: this._photo == null && widget.photo == null
                               ? Text(
                                   'Click here to add photo',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 16),
                                 )
-                              : Image.file(this._photo),
+                              : this._photo == null
+                                  ? Image.network(widget.photo,
+                                      fit: BoxFit.cover)
+                                  : Image.file(
+                                      this._photo,
+                                      fit: BoxFit.cover,
+                                    ),
                         )))),
             SizedBox(height: 16),
             Padding(
@@ -119,9 +127,6 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
               child: TextField(
                 controller: _price,
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  WhitelistingTextInputFormatter.digitsOnly,
-                ],
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Price',
@@ -144,18 +149,28 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
                     flex: 2,
                     child: RestaurantButton(
                       onPressed: _name.text.trim().isNotEmpty &&
-                              _price.text.trim().isNotEmpty &&
-                              this._photo != null
+                                  _price.text.trim().isNotEmpty &&
+                                  this._photo != null ||
+                              widget.menuId != null
                           ? () {
                               FocusScope.of(context).unfocus();
                               buttonKey.currentState.showLoader();
-                              _uploadFile(
-                                  photo: this._photo,
-                                  name: _name.text.trim(),
-                                  price: _price.text.trim());
+                              if (widget.menuId == null)
+                                _uploadFile(
+                                    photo: this._photo,
+                                    name: _name.text.trim(),
+                                    price: _price.text.trim());
+                              else {
+                                _editMenu(
+                                    name: _name.text.trim(),
+                                    photo: this._photo,
+                                    price: _price.text.trim(),
+                                    photoUrl: widget.photo,
+                                    menuId: widget.menuId);
+                              }
                             }
                           : null,
-                      text: 'Add',
+                      text: widget.menuId == null ? 'Add' : 'Edit',
                       key: buttonKey,
                     ),
                   )
@@ -222,6 +237,48 @@ class _AddMenuSheetState extends State<AddMenuSheet> {
         buttonKey.currentState.hideLoader();
         Navigator.pop(context);
       });
+    } on PlatformException catch (e) {
+      buttonKey.currentState.hideLoader();
+      Scaffold.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(e.message),
+      ));
+    }
+  }
+
+  _editMenu({
+    File photo,
+    String name,
+    String price,
+    String photoUrl,
+    String menuId,
+  }) async {
+    try {
+      if (photo == null) {
+        Firestore.instance.collection('menu').document(menuId).updateData({
+          'name': name,
+          'price': double.parse(price),
+        }).whenComplete(() {
+          buttonKey.currentState.hideLoader();
+          Navigator.pop(context);
+        });
+      } else {
+        FirebaseStorage.instance
+            .getReferenceFromUrl(photoUrl)
+            .then((value) async {
+          final StorageUploadTask uploadTask = value.putFile(photo);
+          final StorageTaskSnapshot downloadUrl = await uploadTask.onComplete;
+          final String url = await downloadUrl.ref.getDownloadURL();
+          Firestore.instance.collection('menu').document(menuId).updateData({
+            'name': name,
+            'price': double.parse(price),
+            'photo': url
+          }).whenComplete(() {
+            buttonKey.currentState.hideLoader();
+            Navigator.pop(context);
+          });
+        });
+      }
     } on PlatformException catch (e) {
       buttonKey.currentState.hideLoader();
       Scaffold.of(context).showSnackBar(SnackBar(

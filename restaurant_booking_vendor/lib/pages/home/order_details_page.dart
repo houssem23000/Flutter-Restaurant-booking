@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurantbookingvendor/config/enums.dart';
 import 'package:restaurantbookingvendor/widgets/loader_error.dart';
+import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
+import 'package:url_launcher/url_launcher.dart' as launch;
 
 ///
 /// Created by Sunil Kumar on 11-05-2020 02:03 PM.
@@ -175,6 +177,38 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                             fontWeight: FontWeight.w600),
                                       )),
                               SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: RestaurantIconButton(
+                                      icon: Icons.email,
+                                      color: Colors.red,
+                                      onPressed: () async {
+                                        if (await launch.canLaunch('mailto:' +
+                                            userSnapshot.data['email'])) {
+                                          await launch.launch('mailto:' +
+                                              userSnapshot.data['email']);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  RestaurantIconButton(
+                                    icon: Icons.call,
+                                    color: Colors.green,
+                                    onPressed: () async {
+                                      if (await launch.canLaunch('tel:' +
+                                          userSnapshot.data['phone'])) {
+                                        await launch.launch('tel:' +
+                                            userSnapshot.data['phone']);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
                                 height: 12,
                               ),
                               Text(
@@ -322,10 +356,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                 height: 18,
                               ),
                               if (orderSnapshot.hasData &&
-                                      orderSnapshot.data.data['status'] ==
+                                  (orderSnapshot.data.data['status'] ==
                                           OrderStatus.created.toInt ||
-                                  orderSnapshot.data.data['status'] ==
-                                      OrderStatus.onGoing.toInt)
+                                      orderSnapshot.data.data['status'] ==
+                                          OrderStatus.onGoing.toInt))
                                 Align(
                                     alignment: Alignment.center,
                                     child: isLoading
@@ -358,7 +392,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                   });
                                             },
                                             label: Text(
-                                              'Change to ${orderFromIntToString(orderSnapshot.data.data['status'] + 1)}',
+                                              'Change to ${orderFromIntToString(orderSnapshot.data?.data['status'] + 1)}',
                                               style: TextStyle(
                                                   color: Colors.white),
                                             ))),
@@ -375,47 +409,3 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 }
-/*
-ListTile(
-                                                title:
-                                                    Text('${e.data['name']}'),
-                                                leading:
-                                                    FadeInImage.assetNetwork(
-                                                        placeholder:
-                                                            'assets/food.jpg',
-                                                        image: e.data['photo']),
-                                                trailing: IconButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        barrierDismissible:
-                                                            false,
-                                                        builder: (c) =>
-                                                            RestaurantDialog(
-                                                              positiveAction:
-                                                                  () {
-                                                                return Firestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'menu')
-                                                                    .document(e
-                                                                        .documentID)
-                                                                    .delete();
-                                                              },
-                                                              positiveText:
-                                                                  'Delete',
-                                                              alertTitle:
-                                                                  'Are you sure to delete this menu?',
-                                                              completedTitle:
-                                                                  'This menu has been deleted',
-                                                              loadingTitle:
-                                                                  'Plase wait while deleting',
-                                                              negativeText:
-                                                                  'Cancel',
-                                                            ));
-                                                  },
-                                                  color: Colors.red,
-                                                  icon: Icon(Icons.delete),
-                                                ),
-                                              ),
-* */

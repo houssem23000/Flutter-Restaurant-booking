@@ -126,31 +126,34 @@ class BookingCard extends StatelessWidget {
                           SizedBox(
                             width: 8,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userSnapshot.hasData
-                                    ? '${userSnapshot.data['name']}'
-                                    : '',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).primaryColorDark),
-                              ),
-                              Text(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
                                   userSnapshot.hasData
-                                      ? '${userSnapshot.data['email']} . ${userSnapshot.data['phone']}'
+                                      ? '${userSnapshot.data['name']}'
                                       : '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      height: 1.1,
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context)
-                                          .primaryColorDark
-                                          .withOpacity(0.7))),
-                            ],
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          Theme.of(context).primaryColorDark),
+                                ),
+                                Text(
+                                    userSnapshot.hasData
+                                        ? '${userSnapshot.data['email']} . ${userSnapshot.data['phone']}'
+                                        : '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        height: 1.1,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context)
+                                            .primaryColorDark
+                                            .withOpacity(0.7))),
+                              ],
+                            ),
                           ),
                         ],
                       ),

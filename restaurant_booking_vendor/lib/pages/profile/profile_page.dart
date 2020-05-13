@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:restaurantbookingvendor/config/enums.dart';
 import 'package:restaurantbookingvendor/pages/authentication/login_page.dart';
+import 'package:restaurantbookingvendor/widgets/bookings_card.dart';
 import 'package:restaurantbookingvendor/widgets/edit_profile_sheet.dart';
 import 'package:restaurantbookingvendor/widgets/loader_error.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
@@ -110,10 +112,22 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                     child: RestaurantIconButton(
                       icon: Icons.edit,
                       onPressed: () {
-                        showModalBottomSheet(
+                        showModalBottomSheet<String>(
                             context: context,
                             isScrollControlled: true,
-                            builder: (context) => EditProfileSheet());
+                            builder: (context) => EditProfileSheet(
+                                  widget.document.documentID,
+                                  name: widget.document['name'],
+                                  address: widget.document.data['address'],
+                                  phone: widget.document.data['phone'],
+                                )).then((value) {
+                          if (value != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(value),
+                              behavior: SnackBarBehavior.floating,
+                            ));
+                          }
+                        });
                       },
                     ),
                   ),
@@ -317,13 +331,45 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                   )))
         ];
       },
-      body: ListView(
-          padding: const EdgeInsets.all(0),
-          children: List.generate(
-              20,
-              (index) => ListTile(
-                    title: Text('Item $index'),
-                  ))),
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            Firestore.instance.collection('order').orderBy('date').snapshots(),
+        builder: (c, snapshot) {
+          if (snapshot.hasError)
+            return ErrorText('${snapshot.error.toString()}');
+          if (snapshot.hasData) {
+            final List<DocumentSnapshot> orders = snapshot.data.documents
+                .where((element) =>
+                    element.data['restaurantId'] == widget.document.documentID)
+                .toList();
+
+            if (orders.isEmpty) {
+              return ErrorText('You have no orders yet.');
+            }
+            orders.sort((a, b) => a.data['status'] > b.data['status'] ? 1 : 0);
+
+            return ListView.builder(
+                itemCount: orders.length,
+                itemBuilder: (c, i) {
+                  if (orders[i].data['status'] == OrderStatus.completed.toInt)
+                    return BookingCard.completed(
+                        tableId: orders[i].data['tableId'],
+                        createdBy: orders[i].data['createdBy'],
+                        orderId: orders[i].documentID);
+                  else if (orders[i].data['status'] ==
+                      OrderStatus.cancelled.toInt)
+                    return BookingCard.cancelled(
+                        tableId: orders[i].data['tableId'],
+                        createdBy: orders[i].data['createdBy'],
+                        orderId: orders[i].documentID);
+                  else
+                    return Container();
+                });
+          } else {
+            return Loader();
+          }
+        },
+      ),
     );
   }
 
