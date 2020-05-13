@@ -101,7 +101,7 @@ class _PaymentPageState extends State<PaymentPage> {
             'restaurantId': widget.restaurant,
             "slotNo": widget.timeSlot,
             'tableId': widget.tableId,
-            'status': -1
+            'status': 4
           }).then((DocumentReference doc) {
             widget.items.forEach((element) async {
               await doc.collection('orderItems').add(element.toJson());

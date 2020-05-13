@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurantbookinguser/config/enums.dart';
+import 'package:restaurantbookinguser/pages/home/all_bookings_page.dart';
 import 'package:restaurantbookinguser/pages/profile/profile_page.dart';
 import 'package:restaurantbookinguser/pages/restaurants/all_restaurants_page.dart';
 import 'package:restaurantbookinguser/widgets/bookings_card.dart';
@@ -154,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('Your upcoming bookings',
+                      child: Text('Your on going bookings',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -162,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                               color: Theme.of(context).primaryColorDark)),
                     ),
                     Container(
-                      height: 170,
+                      height: 180,
                       child: StreamBuilder<QuerySnapshot>(
                         stream: Firestore.instance
                             .collection('order')
@@ -178,17 +179,22 @@ class _HomePageState extends State<HomePage> {
                                     element.data['createdBy'] ==
                                         userSnapshot.data.uid &&
                                     element.data['status'] ==
-                                        OrderStatus.created.toInt)
+                                        OrderStatus.onGoing.toInt)
                                 .toList();
+                            if (myOrders.isEmpty) {
+                              return ErrorText('No on going bookings found.');
+                            }
                             return ListView.builder(
                               itemCount: myOrders.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (c, i) {
-                                return BookingCard(
-                                    tableId: myOrders[i].data['tableId'],
-                                    restaurantId:
-                                        myOrders[i].data['restaurantId'],
-                                    orderId: myOrders[i].documentID);
+                                return Center(
+                                  child: BookingCard(
+                                      tableId: myOrders[i].data['tableId'],
+                                      restaurantId:
+                                          myOrders[i].data['restaurantId'],
+                                      orderId: myOrders[i].documentID),
+                                );
                               },
                             );
                           } else
@@ -206,7 +212,77 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (c) => ProfilePage()));
+                                    builder: (c) => AllBookingsPage(
+                                          initialStatus: OrderStatus.onGoing,
+                                        )));
+                          },
+                          highlightColor: Colors.transparent,
+                          textColor: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text('Your upcoming bookings',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.2,
+                              color: Theme.of(context).primaryColorDark)),
+                    ),
+                    Container(
+                      height: 180,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection('order')
+                            .orderBy('date')
+                            .snapshots(),
+                        builder: (c, snapshot) {
+                          if (snapshot.hasError)
+                            return ErrorText('${snapshot.error}');
+                          if (snapshot.hasData) {
+                            final List<DocumentSnapshot> myOrders = snapshot
+                                .data.documents
+                                .where((element) =>
+                                    element.data['createdBy'] ==
+                                        userSnapshot.data.uid &&
+                                    element.data['status'] ==
+                                        OrderStatus.created.toInt)
+                                .toList();
+                            if (myOrders.isEmpty) {
+                              return ErrorText('No upcoming bookings found.');
+                            }
+                            return ListView.builder(
+                              itemCount: myOrders.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (c, i) {
+                                return Center(
+                                  child: BookingCard(
+                                      tableId: myOrders[i].data['tableId'],
+                                      restaurantId:
+                                          myOrders[i].data['restaurantId'],
+                                      orderId: myOrders[i].documentID),
+                                );
+                              },
+                            );
+                          } else
+                            return Loader();
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: FlatButton(
+                          child: Text('View all'),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) => AllBookingsPage(
+                                          initialStatus: OrderStatus.created,
+                                        )));
                           },
                           highlightColor: Colors.transparent,
                           textColor: Theme.of(context).primaryColor,

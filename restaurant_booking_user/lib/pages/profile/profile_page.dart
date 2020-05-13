@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:restaurantbookinguser/config/enums.dart';
 import 'package:restaurantbookinguser/pages/authentication/login_page.dart';
 import 'package:restaurantbookinguser/widgets/booking_details_card.dart';
+import 'package:restaurantbookinguser/widgets/edit_profile_sheet.dart';
 import 'package:restaurantbookinguser/widgets/loader_error.dart';
 import 'package:restaurantbookinguser/widgets/restaurant_button.dart';
 
@@ -104,6 +105,32 @@ class __ProfileWidgetState extends State<_ProfileWidget> {
                 ),
               ),
               actions: [
+                                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: RestaurantIconButton(
+                      icon: Icons.edit,
+                      onPressed: () {
+                        showModalBottomSheet<String>(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => EditProfileSheet(
+                                  widget.document.documentID,
+                                  name: widget.document['name'],
+                                  phone: widget.document.data['phone'],
+                                )).then((value) {
+                          if (value != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(value),
+                              behavior: SnackBarBehavior.floating,
+                            ));
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 16),
