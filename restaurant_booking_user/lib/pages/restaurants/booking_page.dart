@@ -319,8 +319,8 @@ class _BookingPageState extends State<BookingPage> {
                                                                         0),
                                                             child: ListTile(
                                                                 contentPadding:
-                                                                    const EdgeInsets
-                                                                        .all(0),
+                                                                    const EdgeInsets.all(
+                                                                        0),
                                                                 dense: true,
                                                                 title: Text(
                                                                   '${e.data['name']}',
@@ -333,6 +333,8 @@ class _BookingPageState extends State<BookingPage> {
                                                                             .w600,
                                                                   ),
                                                                 ),
+                                                                subtitle: Text(
+                                                                    '${e.data['price']} ₹'),
                                                                 leading: FadeInImage.assetNetwork(
                                                                     placeholder:
                                                                         'assets/food.jpg',
