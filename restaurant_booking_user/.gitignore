@@ -46,7 +46,6 @@ app.*.map.json
 /build/.last_build_id
 /build/windows/
 /build/app/outputs/apk/profile/output.json
-/build/app/outputs/apk/release/
 /build/app/outputs/flutter-apk/
 /build/app/outputs/logs/
 /build/app/outputs/mapping/
