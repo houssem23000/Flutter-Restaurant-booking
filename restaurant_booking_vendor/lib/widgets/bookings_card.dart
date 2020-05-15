@@ -43,8 +43,8 @@ class BookingCard extends StatelessWidget {
               color: status == OrderStatus.completed
                   ? Colors.green
                   : status == OrderStatus.onGoing
-                      ? Colors.deepOrange
-                      : Colors.black,
+                      ? Color(0xff6a11cb)
+                      : Colors.red,
               borderRadius: BorderRadius.circular(12),
             ),
       width: 240,

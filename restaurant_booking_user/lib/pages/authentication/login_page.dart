@@ -71,6 +71,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextField(
                   autofocus: false,
                   controller: _emailController,
+                  onSubmitted: (s) {
+                    FocusScope.of(context).nextFocus();
+                  },
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(

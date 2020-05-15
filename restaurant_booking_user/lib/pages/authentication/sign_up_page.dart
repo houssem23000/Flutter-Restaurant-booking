@@ -79,6 +79,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: _nameController,
                     keyboardType: TextInputType.text,
                     textCapitalization: TextCapitalization.words,
+                    onSubmitted: (s) {
+                      FocusScope.of(context).nextFocus();
+                    },
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -93,6 +96,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    onSubmitted: (s) {
+                      FocusScope.of(context).nextFocus();
+                    },
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -107,6 +113,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    onSubmitted: (s) {
+                      FocusScope.of(context).nextFocus();
+                    },
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -128,7 +137,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: TextField(
                               controller: _passwordController,
                               keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.done,
+                              onSubmitted: (s) {
+                                FocusScope.of(context).nextFocus();
+                              },
+                              textInputAction: TextInputAction.next,
                               obscureText: isObscure,
                               decoration: InputDecoration(
                                 border: InputBorder.none,

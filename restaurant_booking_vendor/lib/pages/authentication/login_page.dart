@@ -73,6 +73,9 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
+                  onSubmitted: (s) {
+                    FocusScope.of(context).nextFocus();
+                  },
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       contentPadding:

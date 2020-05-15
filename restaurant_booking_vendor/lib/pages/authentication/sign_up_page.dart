@@ -3,9 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurantbookingvendor/config/enums.dart';
-import 'package:restaurantbookingvendor/pages/authentication/login_page.dart';
 import 'package:restaurantbookingvendor/pages/home/home_page.dart';
-import 'package:restaurantbookingvendor/pages/profile/profile_page.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_button.dart';
 import 'package:restaurantbookingvendor/widgets/restaurant_container.dart';
 
@@ -17,12 +15,6 @@ class SignUpPage extends StatefulWidget {
   _SignUpPageState createState() => _SignUpPageState();
 }
 
-/*
-* Name
-Email
-Photo
-Phone
-*/
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<RestaurantButtonState> _buttonKey =
       GlobalKey<RestaurantButtonState>();
@@ -44,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _nameController = TextEditingController();
     _confirmPassword = TextEditingController();
     _passwordController = TextEditingController();
+    _addressController = TextEditingController();
   }
 
   @override
@@ -53,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _confirmPassword.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -83,6 +77,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     keyboardType: TextInputType.text,
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
+                    onEditingComplete: () {
+                      FocusScope.of(context).nextFocus();
+                    },
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         contentPadding:
@@ -95,6 +92,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: TextField(
                     controller: _emailController,
+                    onSubmitted: (s) {
+                      FocusScope.of(context).nextFocus();
+                    },
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -110,6 +110,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    onSubmitted: (s) {
+                      FocusScope.of(context).nextFocus();
+                    },
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -146,7 +149,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: TextField(
                               controller: _passwordController,
                               keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.done,
+                              textInputAction: TextInputAction.next,
+                              onSubmitted: (s) {
+                                FocusScope.of(context).nextFocus();
+                              },
                               obscureText: isObscure,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
