@@ -60,3 +60,4 @@ app.*.map.json
 /build/app/outputs/apk/debug/
 /build/app/outputs/flutter-apk/
 /build/f9bc35d9fe412db91556ed29f295b74d/
+/build/url_launcher/
