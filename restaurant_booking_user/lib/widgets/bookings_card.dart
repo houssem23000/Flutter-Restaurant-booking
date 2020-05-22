@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restaurantbookinguser/config/enums.dart';
-import 'package:restaurantbookinguser/pages/profile/profile_page.dart';
+import 'package:restaurantbookinguser/pages/home/all_bookings_page.dart';
 
 ///
 /// Created by Sunil Kumar on 30-04-2020 07:48 PM.
@@ -65,7 +65,11 @@ class BookingCard extends StatelessWidget {
             builder: (c, tableSnapshot) => GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (c) => ProfilePage()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (c) => AllBookingsPage(
+                              initialStatus: status,
+                            )));
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

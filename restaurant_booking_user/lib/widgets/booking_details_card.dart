@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restaurantbookinguser/config/enums.dart';
+import 'package:restaurantbookinguser/pages/home/add_ongoing_menu.dart';
 
 ///
 /// Created by Sunil Kumar on 11-05-2020 11:52 AM.
@@ -204,6 +205,45 @@ class BookingDetailsCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (status == OrderStatus.onGoing) ...[
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Want more delicious food?',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        FlatButton(
+                          padding: const EdgeInsets.all(0),
+                          child: Text(
+                            'Add here',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.blue),
+                          ),
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.blue.shade200,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) => AddOnGoingMenuPage(
+                                        restaurantSnapshot.data['name'],
+                                        restaurantId,
+                                        orderId)));
+                          },
+                        )
+                      ],
+                    )
+                  ]
                 ],
               ),
             ),

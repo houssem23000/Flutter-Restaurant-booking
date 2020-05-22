@@ -68,6 +68,25 @@ extension OrderTimeSlotToString on OrderTimeSlot {
     }
   }
 
+  DateTime get timeRef {
+    switch (this) {
+      case OrderTimeSlot.slot1:
+        return DateTime(00, 00, 00, 11, 00);
+      case OrderTimeSlot.slot2:
+        return DateTime(00, 00, 00, 13, 00);
+      case OrderTimeSlot.slot3:
+        return DateTime(00, 00, 00, 15, 00);
+      case OrderTimeSlot.slot4:
+        return DateTime(00, 00, 00, 17, 00);
+      case OrderTimeSlot.slot5:
+        return DateTime(00, 00, 00, 19, 00);
+      case OrderTimeSlot.slot6:
+        return DateTime(00, 00, 00, 21, 00);
+      default:
+        return DateTime(00, 00, 00, 11, 00);
+    }
+  }
+
   int get toInt {
     switch (this) {
       case OrderTimeSlot.slot1:

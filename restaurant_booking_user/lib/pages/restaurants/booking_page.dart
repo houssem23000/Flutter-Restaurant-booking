@@ -89,7 +89,7 @@ class _BookingPageState extends State<BookingPage> {
                                     firstDate:
                                         currentDate.add(Duration(days: 1)),
                                     lastDate:
-                                        currentDate.add(Duration(days: 3)))
+                                        currentDate.add(Duration(days: 7)))
                                 .then((value) {
                               if (value != null)
                                 setState(() {
