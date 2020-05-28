@@ -206,6 +206,21 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                       }
                                     },
                                   ),
+                                  SizedBox(width: 12),
+                                  MaterialButton(
+                                      onPressed: () {
+                                        Firestore.instance
+                                            .collection('order')
+                                            .document(widget.orderId)
+                                            .updateData({
+                                          'status': OrderStatus.cancelled.toInt
+                                        }).then((value) {});
+                                      },
+                                      color: Colors.red,
+                                      child: Text(
+                                        'Cancel order',
+                                        style: TextStyle(color: Colors.white),
+                                      ))
                                 ],
                               ),
                               SizedBox(

@@ -242,6 +242,23 @@ class BookingDetailsCard extends StatelessWidget {
                           },
                         )
                       ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: MaterialButton(
+                          onPressed: () {
+                            Firestore.instance
+                                .collection('order')
+                                .document(orderId)
+                                .updateData({
+                              'status': OrderStatus.cancelled.toInt
+                            }).then((value) {});
+                          },
+                          color: Colors.red,
+                          child: Text(
+                            'Cancel order',
+                            style: TextStyle(color: Colors.white),
+                          )),
                     )
                   ]
                 ],
